@@ -5,18 +5,17 @@ from bson import ObjectId
 from app.database import accommodations_collection
 
 def get_recommendations(user_interests):
-    print("🔹 Fonction `get_recommendations()` appelée !")
 
     interests_text = " ".join(user_interests).lower()
     accommodations = list(accommodations_collection.find({}))
 
     if not accommodations:
-        print("⚠️ Aucune annonce trouvée dans la base de données !")
+        print("Aucune annonce trouvée dans la base de données !")
         return []
 
     df = pd.DataFrame(accommodations)
 
-    print("🔹 Vérification des valeurs NaN dans df:")
+    print("Vérification des valeurs NaN dans df:")
     print(df.isna().sum())  # Vérifie combien de valeurs NaN existent
 
     # Vérifier et transformer ObjectId en string
@@ -37,9 +36,9 @@ def get_recommendations(user_interests):
     similarities = cosine_similarity(user_vector, tfidf_matrix).flatten()
     df["score"] = similarities
 
-    print(f"🔹 User interests: {interests_text}")
-    print(f"🔹 Accommodations interests: {df['interests_text'].tolist()}")
-    print(f"🔹 Similarities: {similarities.tolist()}")
+    print(f"User interests: {interests_text}")
+    print(f"Accommodations interests: {df['interests_text'].tolist()}")
+    print(f"Similarities: {similarities.tolist()}")
 
     # Vérifier si au moins une recommandation est pertinente
     if df["score"].max() == 0:
