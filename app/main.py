@@ -20,4 +20,4 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"message": "API de recommandation en ligne 🚀"}
+    return {"message": "API de recommandation en ligne"}
