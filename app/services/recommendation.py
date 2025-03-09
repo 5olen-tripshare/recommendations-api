@@ -15,18 +15,15 @@ def get_recommendations(user_interests):
 
     df = pd.DataFrame(accommodations)
 
-    print("Vérification des valeurs NaN dans df:")
-    print(df.isna().sum())  # Vérifie combien de valeurs NaN existent
-
     # Vérifier et transformer ObjectId en string
     if "_id" in df.columns:
         df["_id"] = df["_id"].apply(lambda x: str(x) if isinstance(x, ObjectId) else x)
 
-    # S'assurer que "interests" est bien une liste et non NaN
+    # S'assurer que "interests" est une liste
     df["interests"] = df["interests"].apply(lambda x: x if isinstance(x, list) else [])
     df["interests_text"] = df["interests"].apply(lambda x: " ".join(x).lower())
 
-    # Remplacer les valeurs NaN par une chaîne vide pour éviter l'erreur JSON
+    # Remplacer valeurs NaN par chaîne vide
     df.fillna("", inplace=True)
 
     vectorizer = TfidfVectorizer()
@@ -35,10 +32,6 @@ def get_recommendations(user_interests):
 
     similarities = cosine_similarity(user_vector, tfidf_matrix).flatten()
     df["score"] = similarities
-
-    print(f"User interests: {interests_text}")
-    print(f"Accommodations interests: {df['interests_text'].tolist()}")
-    print(f"Similarities: {similarities.tolist()}")
 
     # Vérifier si au moins une recommandation est pertinente
     if df["score"].max() == 0:
